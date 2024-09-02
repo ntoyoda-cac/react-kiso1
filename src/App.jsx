@@ -1,35 +1,37 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import {Header} from './Header';
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [threads, setThreads] = useState([]);
+
+  const fetchThreads = async () => {
+    // fetch('https://railway.bulletinboard.techtrain.dev/threads')
+    //   .then(res => res.json())
+    //   .then(data => setThreads(data.message));
+    const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads');
+    const data = await response.json();
+    // データをコンソールに出力して確認
+    console.log(data);
+    // id,titleどちらも格納
+    setThreads(data);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <html>
+      <Header />
+      <h1>新着スレッド</h1>
+      <button onClick={fetchThreads}>Get</button>
+      {/* スレッド一覧表示 */}
+      <div className="body">
+        <ul>
+        {threads.map((thread) => (
+          <p key={thread.id}>{thread.id} {thread.title}</p>
+        ))}
+        </ul>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </html>
   )
 }
 
-export default App
+export default App;
