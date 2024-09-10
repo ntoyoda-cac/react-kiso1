@@ -1,37 +1,67 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {Header} from './Header';
 import './App.css'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import NewThread from './NewThread';
 
 function App() {
   const [threads, setThreads] = useState([]);
 
-  const fetchThreads = async () => {
-    // fetch('https://railway.bulletinboard.techtrain.dev/threads')
-    //   .then(res => res.json())
-    //   .then(data => setThreads(data.message));
-    const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads');
-    const data = await response.json();
-    // データをコンソールに出力して確認
-    console.log(data);
-    // id,titleどちらも格納
-    setThreads(data);
-  }
+  useEffect(() => {
+    const fetchThreads = async () => {
+      const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads');
+      const data = await response.json();
+      // データをコンソールに出力して確認
+      console.log(data);
+      // id,titleどちらも格納
+      setThreads(data);
+    }
+    console.count('effect');
+    fetchThreads();
+  },[]);
+
+  // return (
+  //   <html>
+  //     <Header />
+  //     <div style={{ backgroundColor: 'gray' }}>
+  //       {/* スレッド一覧表示 */}
+  //       <div style={{ textAlign: 'center' }}>
+  //         <h1>新着スレッド</h1>
+  //         <ul>
+  //         {threads.map((thread) => (
+  //           <p key={thread.id}>{thread.title}</p>
+  //         ))}
+  //         </ul>
+  //       </div>
+  //     </div>
+  //   </html>
+  // )
 
   return (
-    <html>
+    <Router>
       <Header />
-      <h1>新着スレッド</h1>
-      <button onClick={fetchThreads}>Get</button>
-      {/* スレッド一覧表示 */}
-      <div className="body">
-        <ul>
-        {threads.map((thread) => (
-          <p key={thread.id}>{thread.id} {thread.title}</p>
-        ))}
-        </ul>
-      </div>
-    </html>
-  )
+      <Routes>
+        {/* ホームページ（スレッド一覧表示） */}
+        <Route
+          path="/"
+          element={
+            <div style={{ backgroundColor: 'gray' }}>
+              <div style={{ textAlign: 'center' }}>
+                <h1>新着スレッド</h1>
+                <ul>
+                  {threads.map((thread) => (
+                    <p key={thread.id}>{thread.title}</p>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          }
+        />
+        {/* 新規スレッド作成ページ */}
+        <Route path="/threads/new" element={<NewThread />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
