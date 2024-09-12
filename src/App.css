@@ -1,11 +1,35 @@
 .header {
-  background-color: rgba(0, 128, 79, 0.259);
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
+  background-color: lightgreen;
 }
 
-/* .body {
-  background-color: lightblue;
-  display: 'flex';
-  justify-content: 'space-around'
-} */
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+/* headerのタイトル */
+.header-title {
+  margin-right: 40vw;
+}
+
+/* 「スレッドを立てる」 */
+.header-link {
+  text-align: right;
+  text-decoration: underline;
+}
+
+.thread-list {
+  padding: 0;
+}
+
+.thread-item {
+  border: 1px solid #ccc; /* 四角形の枠線 */
+  padding: 10px; /* 内側の余白 */
+  margin: 10px 100px; /* 各要素間の余白 */
+  border-radius: 5px; /* 角を丸くする */
+  background-color: #f9f9f9; /* 背景色 */
+}
