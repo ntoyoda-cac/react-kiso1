@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Top = () => {
   const [threads, setThreads] = useState([]);
@@ -22,7 +23,9 @@ const Top = () => {
         <h2>新着スレッド</h2>
         <ul className="thread-list">
           {threads.map((thread) => (
-            <p key={thread.id} className="thread-item">{thread.title}</p>
+            <li key={thread.id} className="thread-item">
+              <Link to={`/threads/${thread.id}`}>{thread.title}</Link>
+            </li>
           ))}
         </ul>
       </div>

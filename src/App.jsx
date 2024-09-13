@@ -4,6 +4,7 @@ import { Header } from './Header';
 import './App.css'
 import Top from './Top';
 import NewThread from './NewThread';
+import ThreadPost from './ThreadPost';
 
 function App() {
 
@@ -17,6 +18,8 @@ function App() {
           <Route path="/" element={<Top />} />
           {/* 新規スレッド作成ページ */}
           <Route path="/threads/new" element={<NewThread />} />
+          {/* スレッド一覧表示画面 */}
+          <Route path="/threads/:thread_id" element={<ThreadPost />} />
         </Routes>
       </Router>
     </div>
