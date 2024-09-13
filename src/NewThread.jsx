@@ -8,6 +8,7 @@ const NewThread = () => {
     const apiUrl = 'https://railway.bulletinboard.techtrain.dev/threads';
 
     // payload にデータが入って送信される
+    // APIリクエストで送信するデータをまとめたオブジェクト
     const payload = {
       title: inputTitle,
     };
@@ -23,6 +24,10 @@ const NewThread = () => {
 
     // テキストボックスをクリアする
     setInputTitle('');
+    
+    // トップページに遷移
+    // ページをリロードして遷移
+    window.location.href = '/';
   };
 
   return (
@@ -38,7 +43,7 @@ const NewThread = () => {
       <br />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <a href="/">Topに戻る</a>
-        <button style={{ marginLeft: '10px' }} onClick={handleSubmit}>作成</button>
+        <button style={{ marginLeft: '10px' }} onClick={ handleSubmit } disabled={ inputTitle.length === 0 } >作成</button>
       </div>
     </div>
   );
