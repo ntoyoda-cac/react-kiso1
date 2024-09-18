@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const ThreadPost = () => {
+  // 呼ばれた際の、動的なルートパラメータ「path="/threads/:thread_id"」のthread_idを取得する。
   const { thread_id } = useParams();
-  const [threadPost,setThreadPost] = useState([]);
   console.log(thread_id);
 
-  const [isLoading, setIsLoading] = useState(true);  // ローディング状態を追加
+  // スレッド内ポストを操作するuseState
+  const [threadPost,setThreadPost] = useState([]);
+  
+  // ローディング状態
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchThreadsPost = async () => {
