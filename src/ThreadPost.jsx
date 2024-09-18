@@ -8,10 +8,14 @@ const ThreadPost = () => {
 
   // スレッド内ポストを操作するuseState
   const [threadPost,setThreadPost] = useState([]);
-  
+
   // ローディング状態
   const [isLoading, setIsLoading] = useState(true); 
 
+  // スレッド内ポストを投稿するuseState
+  const [inputPost, setInputPost] = useState('');
+
+  // ポスト表示用
   useEffect(() => {
     const fetchThreadsPost = async () => {
       try {
@@ -31,6 +35,34 @@ const ThreadPost = () => {
     fetchThreadsPost();
   },[thread_id]);
 
+  // ポスト追加用
+  const postSubmit = async () => {
+    const apiUrl = 'https://railway.bulletinboard.techtrain.dev/threads/' + thread_id + '/posts';
+
+    // payload にデータが入って送信される
+    // APIリクエストで送信するデータをまとめたオブジェクト
+    const payload = {
+      threadId: thread_id,
+      post: inputPost,
+    };
+
+    // APIにPOSTリクエストを送信
+    await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload), // ボディをJSONに変換して送信
+    });
+
+    // テキストボックスをクリアする
+    setInputPost('');
+
+    // ページをリロード
+    // window.location.href = '/threads/' + thread_id;
+    window.location.reload();
+  }
+
   if (isLoading) {
     return <p>Loading...</p>;  // データ取得中はローディング表示
   }
@@ -39,12 +71,15 @@ const ThreadPost = () => {
     <div>
       <div style={{ textAlign: 'center' }}>
         <h2>掲示板スレッド内投稿</h2>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <p>スレッドタイトル： </p>
+        <div style={{display: 'flex',justifyContent: 'center',alignItems: 'center'}}>
           <input
             type="text"
             placeholder="投稿しよう！"
+            value={inputPost}
+            onChange={(e) => setInputPost(e.target.value)}
           />
-          <button style={{ marginLeft: '10px' }} >作成</button>
+          <button style={{ marginLeft: '10px' }} onClick={ postSubmit } disabled={ inputPost.length === 0 }>作成</button>
         </div>
         <ul className="thread-list">
           {threadPost.length > 0 ? (
@@ -56,7 +91,7 @@ const ThreadPost = () => {
           )}
         </ul>
       </div>
-      <a href="/">Topに戻る</a>
+      <a href="/" style={{display: 'flex',justifyContent: 'center',alignItems: 'center'}}>Topに戻る</a>
     </div>
   );
 }

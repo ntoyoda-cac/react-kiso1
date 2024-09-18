@@ -4,7 +4,7 @@ import { useState } from 'react'
 const NewThread = () => {
   const [inputTitle, setInputTitle] = useState('');
 
-  const handleSubmit = async () => {
+  const threadSubmit = async () => {
     const apiUrl = 'https://railway.bulletinboard.techtrain.dev/threads';
 
     // payload にデータが入って送信される
@@ -19,7 +19,7 @@ const NewThread = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload), // ボディをJSONに変換して送信
     });
 
     // テキストボックスをクリアする
@@ -43,7 +43,7 @@ const NewThread = () => {
       <br />
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <a href="/">Topに戻る</a>
-        <button style={{ marginLeft: '10px' }} onClick={ handleSubmit } disabled={ inputTitle.length === 0 } >作成</button>
+        <button style={{ marginLeft: '10px' }} onClick={ threadSubmit } disabled={ inputTitle.length === 0 } >作成</button>
       </div>
     </div>
   );
