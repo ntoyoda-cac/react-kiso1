@@ -2,27 +2,39 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const ThreadPost = () => {
-  // const { thread_id } = useParams();
+  const { thread_id } = useParams();
   const [threadPost,setThreadPost] = useState([]);
+  console.log(thread_id);
+
+  const [isLoading, setIsLoading] = useState(true);  // ローディング状態を追加
 
   useEffect(() => {
     const fetchThreadsPost = async () => {
-      // const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads/${thread.id}/posts');
-      const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads/2a031079-ba5b-4d8e-9a47-c6efa80d4ac0/posts');
-      const data = await response.json();
-      // データをコンソールに出力して確認
-      console.log(data);
-      // threadId,posts[id,title]を格納
-      // データをセット
-      setThreadPost(data);
+      try {
+        const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads/' + thread_id + '/posts');
+        const data = await response.json();
+        // データをコンソールに出力して確認
+        console.log(data);
+        // threadId,posts[id,title]を格納
+        // データをセット
+        setThreadPost(data.posts);
+      } catch (error) {
+        console.error('データ取得エラー:', error);
+      } finally {
+        setIsLoading(false);  // データ取得が完了したらローディングを終了
+      }
     }
     fetchThreadsPost();
-  },[]);
+  },[thread_id]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;  // データ取得中はローディング表示
+  }
 
   return (
     <div>
       <div style={{ textAlign: 'center' }}>
-        <h2>投稿スレッドPost</h2>
+        <h2>掲示板スレッド内投稿</h2>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <input
             type="text"
@@ -31,10 +43,13 @@ const ThreadPost = () => {
           <button style={{ marginLeft: '10px' }} >作成</button>
         </div>
         <ul className="thread-list">
-          {/* threadPost.posts が存在するか確認 */}
-          {threadPost.posts && threadPost.posts.map((post) => (
-            <li key={post.id} className="thread-item">{post.post}</li>
-          ))}
+          {threadPost.length > 0 ? (
+            threadPost.map((post) => (
+              <li key={post.id} className="thread-item">{post.post}</li>
+            ))
+          ) : (
+            <li>スレッドに投稿がありません。</li>
+          )}
         </ul>
       </div>
       <a href="/">Topに戻る</a>
