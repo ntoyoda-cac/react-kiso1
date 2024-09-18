@@ -24,7 +24,9 @@ const Top = () => {
         <ul className="thread-list">
           {threads.map((thread) => (
             <li key={thread.id} className="thread-item">
-              <Link to={`/threads/${thread.id}`}>{thread.title}</Link>
+              <Link to={`/threads/${thread.id}`} state={{ title: thread.title }}>{thread.title}</Link>
+              {/* ↓遷移先にデータを渡す方法↓ */}
+              {/* 1.URLにくっつける, 2.useLocation(), 3.Redux, 4.Jotaiライブラリ */}
             </li>
           ))}
         </ul>

@@ -1,49 +1,49 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 
 const ThreadPost = () => {
   // 呼ばれた際の、動的なルートパラメータ「path="/threads/:thread_id"」のthread_idを取得する。
   const { thread_id } = useParams();
-  console.log(thread_id);
+  const location = useLocation();
+  const { title } = location.state || {}; // state が存在しない場合に備えてデフォルト値を設定
+  // console.log(thread_id);
 
   // スレッド内ポストを操作するuseState
   const [threadPost,setThreadPost] = useState([]);
-
-  // ローディング状態
-  const [isLoading, setIsLoading] = useState(true); 
-
   // スレッド内ポストを投稿するuseState
   const [inputPost, setInputPost] = useState('');
+  // ローディング状態を管理
+  const [isLoading, setIsLoading] = useState(true); 
 
-  // ポスト表示用
-  useEffect(() => {
-    const fetchThreadsPost = async () => {
-      try {
-        const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads/' + thread_id + '/posts');
-        const data = await response.json();
-        // データをコンソールに出力して確認
-        console.log(data);
-        // threadId,posts[id,title]を格納
-        // データをセット
-        setThreadPost(data.posts);
-      } catch (error) {
-        console.error('データ取得エラー:', error);
-      } finally {
-        setIsLoading(false);  // データ取得が完了したらローディングを終了
-      }
+  // スレッド内ポストを取得コンポーネント
+  const fetchThreadsPost = useCallback(async () => {
+    try {
+      const response = await fetch('https://railway.bulletinboard.techtrain.dev/threads/' + thread_id + '/posts');
+      const data = await response.json();
+      // データをコンソールに出力して確認
+      console.log(data);
+      // threadId.posts[id,title]のデータをセット
+      setThreadPost(data.posts);
+    } catch (error) {
+      console.error('データ取得エラー:', error);
+    } finally {
+      setIsLoading(false);  // データ取得が完了したらローディングを終了
     }
-    fetchThreadsPost();
-  },[thread_id]);
+  },[thread_id]) // thread_id を依存関係に追加
 
-  // ポスト追加用
+  // スレッド内ポスト表示用
+  useEffect(() => {
+    fetchThreadsPost();
+  },[fetchThreadsPost]); // fetchThreadsPost を依存関係に追加
+
+  // スレッド内ポストの追加コンポーネント
   const postSubmit = async () => {
     const apiUrl = 'https://railway.bulletinboard.techtrain.dev/threads/' + thread_id + '/posts';
 
     // payload にデータが入って送信される
     // APIリクエストで送信するデータをまとめたオブジェクト
     const payload = {
-      threadId: thread_id,
-      post: inputPost,
+      post: inputPost
     };
 
     // APIにPOSTリクエストを送信
@@ -58,20 +58,25 @@ const ThreadPost = () => {
     // テキストボックスをクリアする
     setInputPost('');
 
-    // ページをリロード
+    // ページをリロード（JavaScript）
     // window.location.href = '/threads/' + thread_id;
-    window.location.reload();
+    // window.location.reload();
+    // window.location.reload()を使用すると、ページ全体がリロードされるため、現在のReactの状態がすべて失われます。
+
+    // 画面の再レンダリング（Reactらしくリロード）
+    fetchThreadsPost();
   }
 
+  // データ取得中はローディング表示
   if (isLoading) {
-    return <p>Loading...</p>;  // データ取得中はローディング表示
+    return <p>Loading...</p>;
   }
 
   return (
     <div>
       <div style={{ textAlign: 'center' }}>
         <h2>掲示板スレッド内投稿</h2>
-        <p>スレッドタイトル： </p>
+        <h1>{"スレッド名：" + (title ? title : "タイトルがありません")}</h1>
         <div style={{display: 'flex',justifyContent: 'center',alignItems: 'center'}}>
           <input
             type="text"
@@ -87,7 +92,7 @@ const ThreadPost = () => {
               <li key={post.id} className="thread-item">{post.post}</li>
             ))
           ) : (
-            <li>スレッドに投稿がありません。</li>
+            <li>スレッドにまだ投稿がありません。投稿してみましょう！</li>
           )}
         </ul>
       </div>
@@ -97,17 +102,3 @@ const ThreadPost = () => {
 }
 
 export default ThreadPost;
-
-/*
-{
-  "threadId":"2a031079-ba5b-4d8e-9a47-c6efa80d4ac0",
-  "posts":[
-    {"id":"f39dcb07-3939-4ebb-9aec-ea3658876789","post":"SIA"},
-    {"id":"61dd3f60-689c-41aa-9bf0-17895077e2a5","post":"SIA"},
-    {"id":"609f13d9-6b3c-4877-8856-d6a353f77be4","post":"おおおお"},
-    {"id":"411b6978-1111-4711-a653-403e5b2c3123","post":"た"},
-    {"id":"49185abb-cbec-4583-9e1b-71dd2adf74fa","post":"き"},
-    {"id":"2829cc8d-1238-4e1a-b921-6e7d6593c272","post":"で"}
-  ]
-}
-*/
